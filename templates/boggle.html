@@ -25,7 +25,7 @@
    </div>
    <!-- create the form pay attention to the post route -->
    <!-- *The post route is for the backend and the frontend, it is where the ajax is requesting from -->
-    <form>
+    <form class="form">
         <input type="text" name="word" class="guess">
         <button class="btn">Submit</button>
     </form>
@@ -37,7 +37,7 @@
             <p class="timer"><b>Time:</b></p>
         </div>
         <div class="messages">
-            <p class="message">
+            <p class="msg">
                 <!-- *JSON results about the word will do here -->
             </p>
         </div>
@@ -55,4 +55,7 @@
 <script src="http://unpkg.com/jquery"></script>
 <script src="https://unpkg.com/axios@0.19.0/dist/axios.js"></script>
 <script src="/static/boggle.js"></script>
+<script>
+    let game = new BoggleGame("boggle", 60);
+</script>
 </html>
