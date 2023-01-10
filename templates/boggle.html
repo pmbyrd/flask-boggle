@@ -33,7 +33,7 @@
     <!-- TODO create a section(div) for results, scores word-bank and other requirements -->
     <div class="game-results">
         <div class="score">
-            <p class="points"><b>Score:</b></p>
+            <p><b>Score:</b><span class="points"></span></p>
             <p class="timer"><b>Time:</b></p>
         </div>
         <div class="messages">
@@ -55,7 +55,4 @@
 <script src="http://unpkg.com/jquery"></script>
 <script src="https://unpkg.com/axios@0.19.0/dist/axios.js"></script>
 <script src="/static/boggle.js"></script>
-<script>
-    let game = new BoggleGame("boggle", 60);
-</script>
 </html>
