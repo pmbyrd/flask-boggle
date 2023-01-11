@@ -1,19 +1,36 @@
 // *remember when using jquery, you need to use $() to select the element, and working with classes is helpful
 const form = document.querySelector('form');
 let score = 0;
+// on dodument ready hide board
+$(document).ready(function() {
+    $(".board").hide();
+    $(".guess").attr("disabled", true);
+    $(".guess-btn").attr("disabled", true);
+    
+})
 // on document ready start the timer
 $(".start").on("click", function() {
-    startCountDown(60);
+    // start the game with a count down and a board
+    countDown();
     $(".guess").attr("disabled", false);
     $(".guess-btn").attr("disabled", false);
     $(".start").attr("disabled", true);
     $(".start").text("Restart");
     $(".guess").focus();
+    displayBoard();
+    // dont show the board and form until the start button is clicked 
 })
 
-// make an end game function that post the score to the database
+// if button is restart post the scores display message of a json response of the scores from the session then reload the page 
 
-function startCountDown(timer){
+// if button is restart make reload the page
+
+
+// make an end game function that post the score to the databsase and gets the high score 
+
+// display to the message to the user that the game is over
+
+function countDown(){
     
     let $timer = $(".timer");
     let timer = 60;
@@ -25,9 +42,35 @@ function startCountDown(timer){
             clearInterval(interval);
             $(".guess").attr("disabled", true);
             $(".guess-btn").attr("disabled", true);
+            // enable the start button
+            $(".start").attr("disabled", false);
         }
     }, 1000);
+    if (timer === 0) {
+        // post the score to the database
+        postScore()
+        // get the high score from the database
+        getScore
+    }
 }
+
+// hide the board and form until the start button is clicked
+function displayBoard() {
+    if ($(".board").is(":hidden")) {
+        $(".board").show();
+    }
+}
+
+// make a post request to the server of the highscore
+function post
+
+// get high score 
+async function getScore() {
+    const response = await axios.get("/scores")
+    console.log(response.data)
+    displayMessage(response.data, "ok")
+}
+// TODO implement a post request route in the app.py
 
 form.addEventListener("submit", async function(e){
     e.preventDefault();
