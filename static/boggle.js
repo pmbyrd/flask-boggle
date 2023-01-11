@@ -1,11 +1,13 @@
 // *remember when using jquery, you need to use $() to select the element, and working with classes is helpful
 const form = document.querySelector('form');
 let score = 0;
+const words = new Set()
 // on dodument ready hide board
 $(document).ready(function() {
     $(".board").hide();
     $(".guess").attr("disabled", true);
     $(".guess-btn").attr("disabled", true);
+    $(".submit").hide()
     
 })
 // on document ready start the timer
@@ -40,8 +42,9 @@ function countDown(){
         $timer.text(timer);
         if (timer === 0) {
             clearInterval(interval);
+            // disable the input and button
             $(".guess").attr("disabled", true);
-            $(".guess-btn").attr("disabled", true);
+            $(".submit").show()
             // enable the start button
             $(".start").attr("disabled", false);
         }
@@ -50,7 +53,7 @@ function countDown(){
         // post the score to the database
         postScore()
         // get the high score from the database
-        getScore
+        getScore()
     }
 }
 
@@ -61,40 +64,33 @@ function displayBoard() {
     }
 }
 
-// make a post request to the server of the highscore
-function post
-
-// get high score 
-async function getScore() {
-    const response = await axios.get("/scores")
-    console.log(response.data)
-    displayMessage(response.data, "ok")
-}
-// TODO implement a post request route in the app.py
-
 form.addEventListener("submit", async function(e){
     e.preventDefault();
    console.log("form submitted");
    let word = $(".guess").val()
-   console.log(word)
+//    don't double check a word
+    if (words.has(word)) {
+        displayMessage(`Duplicate word: ${word}`, "err")
+        return
+    }
    const response = await axios.get("/check-valid-word", {params: {word: word}})
     console.log(response.data.result)
-    
-
     // clear the input
     $(".guess").val("")
-    if(response.data.result === "ok"){
+    // set the conditional logic for if a word is valid or not
+    if (response.data.result === "not-word") {
+        displayMessage(`${word} is not a word`, "err")
+    } else if (response.data.result === "not-on-board") {
+        displayMessage(`${word} is not on the board`, "err")
+        // if word okay add to score and append word
+    } else { 
+        displayMessage(`Good job! ${word} added`, "ok")
+        // *remember when updating code to pay attn to the order of execution
+        words.add(word)
         displayWord(word)
         score += word.length
-        displayScore(score)
-        displayMessage(`Added: ${word}`, "ok")
-    } else if (response.data.result === "not-on-board") {
-        displayMessage(`Not a valid word: ${word}`, "err")
+        displayScore()
     }
-    
-    // start the timer
-  
-    
 })
 
     // todo displayWord(word)
@@ -108,17 +104,48 @@ function displayWord(word) {
 function displayScore() {
     let $score = $(".points");
     $score.text(score);
-}
-    
+}   
     // todo displayMessage(msg, cls) displayes the JSON response
 function displayMessage(msg, cls) {
     let $msg = $(".msg");
     $msg.text(msg).removeClass().addClass(`msg ${cls}`);
-}    
+}
 
+function checkDuplicateWords(word) {
+    const words = new Set()
+    if (words.has(word)) {
+        displayMessage(`Duplicate word: ${word}`, "err")
+    } else {
+        words.add(word)
+    }
+    return words
+}
 
-    // todo postScore()
+// TODO implement a post request route in the app.py
+async function postScore() {
+    const score = $(".points").text()
+    const response = await axios.post("/scores", {score: score})
+    console.log(response.data.data)
+    // send the score in json
 
-    // todo getHighScore()
+}
 
+//  Todo score result functions
+async function getScore() {
+    if (timer === 0) {
+        const response = await axios.get("/scores")
+        if (responce.data.newHigh) {
+            displayMessage(`New high score: ${response.data.score}`, "ok")
+        }
+    }
+}
 
+function checkDuplicateWords(word) {
+    const words = new Set()
+    if (words.has(word)) {
+        displayMessage(`Duplicate word: ${word}`, "err")
+    } else {
+        words.add(word)
+    }
+    return word
+}
