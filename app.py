@@ -46,6 +46,8 @@ def handle_scores():
     highscore = session.get("highscore", 0)
     play_count = session.get("play_count", 0)
     # *store the values in the session
+# # access the results in the session for comparison and feedback to the user
+#     return pass
     session["highscore"] = max(score, highscore)
     session["play_count"] = play_count + 1
     
@@ -56,5 +58,3 @@ def handle_scores():
   
     
 
-# # access the results in the session for comparison and feedback to the user
-#     return pass
