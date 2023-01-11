@@ -1,69 +1,13 @@
 // *remember when using jquery, you need to use $() to select the element, and working with classes is helpful
+
+// Todo initialize the variables needed for the game and the necessary elements from the page
+
 const form = document.querySelector('form');
+const $start = $(".start");
 let score = 0;
 const words = new Set()
-// on dodument ready hide board
-$(document).ready(function() {
-    $(".board").hide();
-    $(".guess").attr("disabled", true);
-    $(".guess-btn").attr("disabled", true);
-    $(".submit").hide()
-    
-})
-// on document ready start the timer
-$(".start").on("click", function() {
-    // start the game with a count down and a board
-    countDown();
-    $(".guess").attr("disabled", false);
-    $(".guess-btn").attr("disabled", false);
-    $(".start").attr("disabled", true);
-    $(".start").text("Restart");
-    $(".guess").focus();
-    displayBoard();
-    // dont show the board and form until the start button is clicked 
-})
 
-// if button is restart post the scores display message of a json response of the scores from the session then reload the page 
-
-// if button is restart make reload the page
-
-
-// make an end game function that post the score to the databsase and gets the high score 
-
-// display to the message to the user that the game is over
-
-function countDown(){
-    
-    let $timer = $(".timer");
-    let timer = 60;
-    $timer.text(timer);
-    let interval = setInterval(function() {
-        timer--;
-        $timer.text(timer);
-        if (timer === 0) {
-            clearInterval(interval);
-            // disable the input and button
-            $(".guess").attr("disabled", true);
-            $(".submit").show()
-            // enable the start button
-            $(".start").attr("disabled", false);
-        }
-    }, 1000);
-    if (timer === 0) {
-        // post the score to the database
-        postScore()
-        // get the high score from the database
-        getScore()
-    }
-}
-
-// hide the board and form until the start button is clicked
-function displayBoard() {
-    if ($(".board").is(":hidden")) {
-        $(".board").show();
-    }
-}
-
+// the user input is submitted and at the end of the game the score is posted to the server
 form.addEventListener("submit", async function(e){
     e.preventDefault();
    console.log("form submitted");
@@ -93,6 +37,43 @@ form.addEventListener("submit", async function(e){
     }
 })
 
+// on dodument ready hide board
+$(document).ready(function() {
+    $(".board").hide();
+    $(".guess").attr("disabled", true);
+    $(".guess-btn").attr("disabled", true);
+    $(".submit").hide()
+    
+})
+
+// *Don't show the board until the start button is clicked
+$start.on("click", function() {
+    // start the game with a count down and a board
+    countDown();
+    $(".guess").attr("disabled", false);
+    $(".guess-btn").attr("disabled", false);
+    $(".start").attr("disabled", true);
+    $(".start").text("Restart");
+    $(".guess").focus();
+    displayBoard();
+    reload();
+})
+
+// if button is restart make reload the page
+function reload() {
+    if ($(".start").text() === "Restart") {
+        $start.on("click", function() {
+            location.reload();
+        })
+}}
+
+// hide the board and form until the start button is clicked
+function displayBoard() {
+    if ($(".board").is(":hidden")) {
+        $(".board").show();
+    }
+}
+
     // todo displayWord(word)
 function displayWord(word) {
     let $ul = $(".words");
@@ -111,23 +92,41 @@ function displayMessage(msg, cls) {
     $msg.text(msg).removeClass().addClass(`msg ${cls}`);
 }
 
-function checkDuplicateWords(word) {
-    const words = new Set()
-    if (words.has(word)) {
-        displayMessage(`Duplicate word: ${word}`, "err")
-    } else {
-        words.add(word)
+// Todo countDown() function to start the timer when the start button is clicked
+async function countDown() {
+    let $timer = $(".timer");
+    let timer = 60;
+    $timer.text(timer);
+    let interval = setInterval(function() {
+        timer--;
+        $timer.text(timer);
+        if (timer === 0) {
+            clearInterval(interval);
+            // disable the input and button
+            $(".guess").attr("disabled", true);
+            $(".submit").show()
+            // enable the start button
+            $(".start").attr("disabled", false);
+        }
+    }, 1000);
+    if (timer === 0) {
+        // post the score to the database
+        await postScore()
+        // get the high score from the database
+        await getScore()
     }
-    return words
+}
+
+// display to the message to the user that the game is over
+function gameOver() {
+    $(".game-status").text("Game Over")
 }
 
 // TODO implement a post request route in the app.py
 async function postScore() {
     const score = $(".points").text()
     const response = await axios.post("/scores", {score: score})
-    console.log(response.data.data)
-    // send the score in json
-
+    console.log(response.data)
 }
 
 //  Todo score result functions
@@ -138,14 +137,4 @@ async function getScore() {
             displayMessage(`New high score: ${response.data.score}`, "ok")
         }
     }
-}
-
-function checkDuplicateWords(word) {
-    const words = new Set()
-    if (words.has(word)) {
-        displayMessage(`Duplicate word: ${word}`, "err")
-    } else {
-        words.add(word)
-    }
-    return word
 }
