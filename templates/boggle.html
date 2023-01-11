@@ -11,6 +11,7 @@
    <button class="start">Start Game</button>
     <!-- create the board -->
    <div class="game-board">
+    <p class="game-status"></p>
     <table class="board">
         <tr class="row">
             {% for row in board%}
@@ -27,13 +28,13 @@
    <!-- *The post route is for the backend and the frontend, it is where the ajax is requesting from -->
     <form class="form">
         <input type="text" name="word" class="guess">
-        <button class="btn">Submit</button>
+        <button class="submit" >Submit</button>
     </form>
 
     <!-- TODO create a section(div) for results, scores word-bank and other requirements -->
     <div class="game-results">
         <div class="score">
-            <p><b>Score:</b><span class="points"></span></p>
+            <p><b class="highscore">Score:</b><span class="points"></span></p>
             <p><b>Time:</b><span class="timer"></span></p>
         </div>
         <div class="messages">
@@ -43,11 +44,8 @@
         </div>
         <div class="words">
             <ul class="word-bank">
-
+                <!-- *JSON results about the word will do here -->
             </ul>
-        </div>
-        <div class="scores">
-        </div>
     </div>
 
 </body>

@@ -37,9 +37,24 @@ def check_valid_word():
     
 
 # post route for results to the server after a game has completed
-# @app.route('/scores', methods=["POST"] )
-# def handle_scores():
+@app.route('/scores', methods=["POST"] )
+def handle_scores():
+    """Get the scores from the front end at the end of a game and store them to the session"""
 # # instead of retrieving the results from the server, we will store them in the session
+    # Todo implement the variables to store the values of the post requests and store them in the session
+    score = request.json["score"]
+    highscore = session.get("highscore", 0)
+    play_count = session.get("play_count", 0)
+    # *store the values in the session
+    session["highscore"] = max(score, highscore)
+    session["play_count"] = play_count + 1
+    
+    return jsonify(newHigh=score > highscore)
+    
+    
+    
+  
+    
 
 # # access the results in the session for comparison and feedback to the user
 #     return pass
